@@ -1,11 +1,13 @@
 PACKAGE_NAME  = sample_project
 
-.PHONY        = setup jupyter analyse lint test run-tests
+.PHONY        = help setup jupyter analyse lint test all-tests
 .DEFAULT_GOAL = help
 
-# Scan the Makefile for pairs of lines: a line staring with ##
-# is output as command description and the command contained
-# in the following line is output as command name.
+# Scan this Makefile and print a summary of the available commands.
+#
+# A little Sed script searches for pairs of lines: a line staring with ##
+# is printed as a command description and the command contained
+# in the following line is printed as a command name.
 help: Makefile
 	@echo
 	@echo " Choose a command run in "\'$(shell basename "$(PWD)")\'":"
@@ -14,9 +16,11 @@ help: Makefile
 		| column -t -s ':' | sed -e 's/^/ /'
 	@echo
 
-## Setup the project
+## Setup the project for local development
 setup:
-	@poetry install
+	pyenv install --skip-existing 3.8.1
+	pyenv local 3.8.1
+	poetry install
 
 ## Open Jupyter notebooks
 jupyter:
@@ -38,4 +42,4 @@ test:
 	poetry run pytest --cov ${PACKAGE_NAME} --cov-report html --cov-report term
 
 ## Run all checks and tests
-run-tests: analyse lint test
+all-tests: analyse lint test
